@@ -18,7 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
-
+#include<memory/paddr.h>
 static int is_batch_mode = false;
 
 void init_regex();
@@ -49,9 +49,81 @@ static int cmd_c(char *args) {
 
 
 static int cmd_q(char *args) {
+  nemu_state.state = NEMU_QUIT;
   return -1;
 }
 
+static int cmd_si(char *args){//未真正
+  if(args == NULL){
+        cpu_exec(1);
+        return 0;
+    }
+  if(args[0]=='-'){printf("wrong number\n");return 0;}
+  uint64_t N=strtoul(args,NULL,0);
+  //printf("%lu",N);
+  cpu_exec(N);
+  return 0;
+}
+
+static int cmd_info(char *args){
+  if(args == NULL){
+        printf("No args\n");
+        return 0;
+    }
+  if(strcmp(args,"r")==0){
+    isa_reg_display();}
+  else if(strcmp(args,"w")==0){
+    //printf("wait to be realized\n");
+    display_watchpoints();
+  }
+  return 0;
+}
+
+static int cmd_x(char *args){
+  if(args == NULL){
+        printf("No args\n");
+        return 0;
+    }
+  int64_t N=1;//atol(args);
+  char* n=strtok(args," ");
+  char* e=strtok(NULL," ");
+  if(e==NULL){e=n;}
+  else{N=atol(n);}
+  //printf("%d,%s",N,args);
+  paddr_t addr = 0;
+  sscanf(e,"%x", &addr);
+  for(int i=N;i>0;i--){
+    printf("%x\n",paddr_read(addr,4));
+    addr+=4;
+  }
+  return 0;
+}
+static int cmd_p(char *args){
+  if(args == NULL){
+        printf("No args\n");
+        return 0;
+    }
+    bool flag = false;
+    expr(args, &flag);
+    return 0;}
+static int cmd_w(char* args){
+  if(args == NULL){
+        printf("No args\n");
+        return 0;
+    }
+  new_wp(args);
+  return 0;
+}
+
+static int cmd_d(char* args){
+  if(args == NULL){
+        printf("No args\n");
+        return 0;
+    }
+  int NO=atoi(args);
+  delete_wp(NO);
+  return 0;
+}
 static int cmd_help(char *args);
 
 static struct {
@@ -64,6 +136,12 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
+  { "si", "Step for N times",cmd_si},
+  {"info", "Display the stateobservation of programme",cmd_info},
+  {"x","Scan Memory(2)",cmd_x},
+  {"p","Expression Evaluation",cmd_p},
+  {"w","Set Watchpoints",cmd_w},
+  {"d","Delete No.N Watchpoint",cmd_d}
 
 };
 
@@ -97,6 +175,7 @@ void sdb_set_batch_mode() {
 }
 
 void sdb_mainloop() {
+  sdb_set_batch_mode();
   if (is_batch_mode) {
     cmd_c(NULL);
     return;
