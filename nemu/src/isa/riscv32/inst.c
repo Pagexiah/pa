@@ -38,7 +38,18 @@ enum {
 #define immJ() do { *imm = SEXT(((BITS(i,31,31)<<20)+(BITS(i,19,12)<<13>>1)+(BITS(i,20,20)<<20>>9)+(BITS(i,30,21)<<11>>10)),21); } while(0)
 #define immB() do { *imm = SEXT((BITS(i,31,31)<<12)+(BITS(i,7,7)<<12>>1)+(BITS(i,30,25)<<7>>2)+(BITS(i,11,8)<<9>>8),13);} while(0)
 //end
-
+//pa3
+static vaddr_t *csr(word_t imm) {
+  switch (imm)
+  {
+  case 0x305: return &(cpu.csr.mtvec);
+  case 0x341: return &(cpu.csr.mepc);
+  case 0x342: return &(cpu.csr.mcause);
+  case 0x300: return &(cpu.csr.mstatus);
+  default: panic("Unknown csr");
+  }
+}
+#define CSR(i) *csr(i)
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst.val;
   int rs1 = BITS(i, 19, 15);
@@ -143,6 +154,10 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 110 ????? 00100 11", ori    , I, R(rd)=src1|imm);
   INSTPAT("??????? ????? ????? 010 ????? 00100 11", slti   , I, if((int32_t)src1<(int32_t)imm){R(rd)=1;}else{R(rd)=0;});
   //INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrw  , I, );
+  //pa3
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(dest) = CSR(imm); CSR(imm) = src1);
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(dest) = CSR(imm); CSR(imm) |= src1);
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, bool suc;s->dnpc=isa_raise_intr(isa_reg_str2val("a7",&suc,s->pc)));
   //end
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
   INSTPAT_END();
