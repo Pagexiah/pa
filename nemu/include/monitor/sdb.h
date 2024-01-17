@@ -13,22 +13,16 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#ifndef __SDB_H__
+#define __SDB_H__
+
 #include <common.h>
-
-extern uint64_t g_nr_guest_inst;
-FILE *log_fp = NULL;
-
-void init_log(const char *log_file) {
-  log_fp = stdout;
-  if (log_file != NULL) {
-    FILE *fp = fopen(log_file, "w");
-    Assert(fp, "Can not open '%s'", log_file);
-    log_fp = fp;
-  }
-  Log("Log is written to %s", log_file ? log_file : "stdout");
-}
-
-bool log_enable() {
-  return MUXDEF(CONFIG_TRACE, (g_nr_guest_inst >= CONFIG_TRACE_START) &&
-         (g_nr_guest_inst <= CONFIG_TRACE_END), false);
-}
+struct watchpoint;
+typedef struct watchpoint WP;
+word_t expr(char *e, bool *success);
+void display_watchpoints();
+void free_wp(WP *wp);
+WP* new_wp(char* );
+void delete_wp(int NO);
+bool compare();
+#endif

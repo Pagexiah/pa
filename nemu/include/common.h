@@ -20,7 +20,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 #include <string.h>
-
+#include <time.h> //pa1
 #include <generated/autoconf.h>
 #include <macro.h>
 

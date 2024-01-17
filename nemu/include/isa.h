@@ -55,4 +55,34 @@ word_t isa_query_intr();
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
 void isa_difftest_attach();
 
+//ftarce
+//#ifdef CONFIG_FTRACE
+#include <elf.h>
+
+//ftrace pa2.2
+
+#define func_name_len 128
+typedef struct {
+  char func_name[func_name_len];
+  uint32_t func_start;
+  uint32_t func_end;
+  size_t size;
+}Func;
+#define funcs_num 1024
+extern Func elf_func[funcs_num];
+typedef struct funcs{
+  Func *cur_ad;//current func addr
+  Func *fut_ad;//future func addr
+  paddr_t pc_addr;// the pc of call or return
+  bool type;//call or return
+  struct funcs *next;
+}Funcs;
+extern Funcs *func_head;
+#define Ftrace_call 1
+#define Ftrace_ret 0
+void init_ftrace();
+//#endif
+
 #endif
+
+

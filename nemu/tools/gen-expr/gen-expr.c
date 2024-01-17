@@ -30,11 +30,38 @@ static char *code_format =
 "  printf(\"%%u\", result); "
 "  return 0; "
 "}";
+static int index_bud=0;
+int choose(){
+  srand((unsigned int)time(NULL));
+  return rand() %3;}
 
-static void gen_rand_expr() {
-  buf[0] = '\0';
+void gen_num(){
+  srand((unsigned int)time(NULL));
+  bool flag=0;
+  while(!flag){
+    for(int i=0;i<=3;i++){
+      int num=rand() %10;
+      if(num!=0){flag=1;buf[index_buf++]=num+'0';} 
+      else if(num==0 && flag==1){buf[index_buf++]=num+'0';}
+    }
+  }
 }
-
+void gen(char a){buf[index_buf++]=a;}
+void gen_rand_op(){
+  srand((unsigned int)time(NULL));
+  char op[4] = {'+', '-', '*', '/'};
+  int index = rand() % 4;
+  buf[index_buf ++] = op[index];
+}
+static void gen_rand_expr() {
+  if(index_buf>65530){printf("overflow\n")}  
+  switch (choose()) {
+    case 0: gen_num(); break;
+    case 1: gen('('); gen_rand_expr(); gen(')'); break;
+    default: gen_rand_expr(); gen_rand_op(); gen_rand_expr(); break;
+  }
+  
+}
 int main(int argc, char *argv[]) {
   int seed = time(0);
   srand(seed);

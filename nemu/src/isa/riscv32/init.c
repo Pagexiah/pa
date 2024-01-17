@@ -34,10 +34,33 @@ static void restart() {
   cpu.gpr[0] = 0;
 }
 
+//ftrace
+
+#ifdef CONFIG_FTRACE
+Func elf_func[funcs_num];
+Funcs *func_head;
+void init_ftrace(){
+    for(int i=0;i<funcs_num;i++)
+      {
+        elf_func[i].func_name[0]='\0';
+        elf_func[i].func_name[func_name_len-1]='\0';
+        elf_func[i].func_start=0;
+        elf_func[i].func_end=0;
+        elf_func[i].size=0;
+      }
+    //func_head=(Funcs *)malloc(sizeof(Funcs));
+    //func_head->next=NULL;
+   // printf("elf_func[0].func_start:%u\n",elf_func[0].func_start);
+    //printf("init.c init_ftrace()\n");
+}
+#endif
+
 void init_isa() {
   /* Load built-in image. */
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
   /* Initialize this virtual computer system. */
   restart();
+  
+
 }

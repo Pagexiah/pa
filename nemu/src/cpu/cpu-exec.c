@@ -17,7 +17,8 @@
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
-
+#include <monitor/sdb.h>//pa1加的
+//#include"src/monitor/sdb/sdb.h"//src/cpu/cpu-exec.c
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.
@@ -30,6 +31,71 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
+
+/*
+// iringbuf start
+typedef struct Buf{
+  char p[128];
+  struct Buf *next;
+}buf;
+static buf *head=NULL;
+static int count_p=0;
+static bool f=0;
+
+
+void iringbuf(Decode *s){ 
+  buf *new=(buf *)malloc(sizeof(buf));
+  strcpy(new->p,s->logbuf);
+  new->next=NULL;
+  //printf("%s\n",new->p);
+  //printf("%s\n",s->logbuf);
+  if (head==NULL){head=new;count_p++;}
+  else if(count_p<16 && f==0)
+  {
+    buf* cur=head;
+    while(cur->next)
+    {
+      cur=cur->next;
+    }
+    cur->next=new;
+    count_p++;
+    if(count_p==16){count_p=1;f=1;}
+  }
+  else if(count_p<=16 && f==1)
+  {
+    buf* cur=head;
+    int i=1;
+    while(i<count_p)
+    {
+      cur=cur->next;
+      i++;
+    }
+    strcpy(cur->p,s->logbuf);
+    if(count_p<16){count_p++;}else{count_p=1;}
+    
+   }
+   else{}
+}
+
+static void putiringbuf(){
+  int i=1;
+  if(count_p>1){count_p--;}
+  else{count_p=16;}
+  for(buf *q=head;q!=NULL;q=q->next)
+  { 
+    
+    if(i!=count_p){
+      printf("   %s\n",q->p);}
+    else{
+      printf("-->%s\n",q->p);}
+    i++;
+  }
+}
+
+*/
+//iringbuf end  pa2.2
+
+
 void device_update();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
@@ -38,6 +104,11 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+  if(compare()==false)
+  {nemu_state.state=NEMU_STOP;
+  printf("invoke a watcpoint\n");}
+  //void iringbuf(Decode *s);
+  //iringbuf(_this);
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
@@ -60,6 +131,39 @@ static void exec_once(Decode *s, vaddr_t pc) {
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
+  /*
+  buf *new=(buf *)malloc(sizeof(buf));
+  strcpy(new->p,s->logbuf);
+  new->next=NULL;
+  //printf("%s\n",new->p);
+  //printf("%s\n",s->logbuf);
+  if (head==NULL){head=new;count_p++;}
+  else if(count_p<16 && f==0)
+  {
+    buf* cur=head;
+    while(cur->next)
+    {
+      cur=cur->next;
+    }
+    cur->next=new;
+    count_p++;
+    if(count_p==16){count_p=1;f=1;}
+  }
+  else if(count_p<=16 && f==1)
+  {
+    buf* cur=head;
+    int i=1;
+    while(i<count_p)
+    {
+      cur=cur->next;
+      i++;
+    }
+    strcpy(cur->p,s->logbuf);
+    if(count_p<16){count_p++;}else{count_p=1;}
+    
+   }
+   else{}
+*/
 
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
@@ -69,18 +173,59 @@ static void exec_once(Decode *s, vaddr_t pc) {
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
 #endif
+  
 }
 
+//iringbuf implement pa 2,2
+
+//putftrace
+#ifdef CONFIG_FTRACE
+#include"isa.h"
+void putftrace(){
+  Funcs *p=func_head;
+  int i=0;
+  printf("\n");
+  bool flag=0;
+  for(;p!=NULL;p=p->next){
+    char qq[1024];
+    char *q=&qq[0];
+    q+=snprintf(q,1024,FMT_WORD ":",p->pc_addr);
+    if(p->type==Ftrace_call){
+      if(flag==0){i=i+1;}
+      for(int t=0;t<i;t++){q+=snprintf(q,1024," ");}
+      q+=snprintf(q,1024, "call[%s@%x]",p->fut_ad->func_name,p->fut_ad->func_start);
+      flag=0;
+    }
+    else{
+      if(flag==1){i=i-1;}
+      for(int t=0;t<i;t++){q+=snprintf(q,1024," ");}
+      q+=snprintf(q,1024, "ret[%s]",p->cur_ad->func_name);
+      flag=1;
+    }
+    printf("%s\n",qq);
+  }
+}
+#endif
+
 static void execute(uint64_t n) {
+  //printf("%ld",n);
   Decode s;
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);
-    if (nemu_state.state != NEMU_RUNNING) break;
+    //iringtrace
+    if (nemu_state.state != NEMU_RUNNING) {
+      //void putiringbuf(); 
+      //putiringbuf();
+#ifdef CONFIG_FTRACE
+      putftrace();
+#endif
+      break;}
     IFDEF(CONFIG_DEVICE, device_update());
   }
 }
+
 
 static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
