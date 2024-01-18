@@ -8,7 +8,7 @@
 
 int printf(const char *fmt, ...) {
   //panic("Not implemented");
-  char out[1024]={'\0'};
+  char out[9216]={'\0'};
   //va_list ap;
   //sprintf(out,fmt,...);
   va_list ap;
