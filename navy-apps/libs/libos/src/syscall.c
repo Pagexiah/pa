@@ -70,8 +70,14 @@ int _write(int fd, void *buf, size_t count) {
   _syscall_(SYS_write,(intptr_t)fd,(intptr_t)buf,(intptr_t)count);
   return 0;
 }
-
+extern char end;
 void *_sbrk(intptr_t increment) {
+  static char *e=&end;
+  if(_syscall_(SYS_brk,increment,0,0)==0){
+    void *ret=e;
+    m+=increment;
+    return ret;
+  }
   return (void *)-1;
 }
 
