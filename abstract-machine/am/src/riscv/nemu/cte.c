@@ -9,7 +9,7 @@ Context* __am_irq_handle(Context *c) {
     Event ev = {0};
     printf("cause:%d\n",c->mcause);
     switch (c->mcause) {
-      case 1: ev.event=EVENT_YIELD;printf("YIELD:%d\n",EVENT_YIELD);break;
+      case -1: ev.event=EVENT_YIELD;printf("YIELD:%d\n",EVENT_YIELD);break;
       default: ev.event = EVENT_ERROR; break;
     }
 
