@@ -21,7 +21,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
    */
   cpu.csr.mcause = NO;cpu.csr.mepc = epc;
   switch(NO){
-    case 2:cpu.csr.mepc+=4;
+    case -1:cpu.csr.mepc+=4;
   }
   
   printf("\nmcause:%d,mepc:%x,mtvec:%x\n",cpu.csr.mcause,cpu.csr.mepc,cpu.csr.mtvec);
