@@ -127,7 +127,7 @@ int vsprintf(char *out,const char *fmt,va_list ap){
           char *s = va_arg(ap, char *);
           //memcpy(&out,s,strlen(s));
           strcpy(out,s);
-          out+=strlen(out);
+          out+=strlen(s);
           break;
         case 'c':
           char c=va_arg(ap,int);
