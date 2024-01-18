@@ -32,9 +32,9 @@ printf("%-10s0x%-20x%-20u\n",(regs)[i],cpu.gpr[i],cpu.gpr[i]);}
 word_t isa_reg_str2val(const char *s, bool *success) {
   int l=strlen(s);
   for(int i=0;i<32;++i){
-    if(strncmp(regs[i],&s[0],l)==0){
+    if(strncmp(regs[i],s,l)==0){
     *success=true;
-      printf("%d\n",cpu.gpr[i]);
+      //printf("%d\n",cpu.gpr[i]);
       return cpu.gpr[i];}
   }
   return 0;
