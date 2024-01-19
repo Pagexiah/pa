@@ -51,7 +51,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
   
   size_t fs_read(int fd,void* buf, size_t len){
     if(file_table[fd].read!=NULL) return file_table[fd].read(buf,0,len);
-    if(fd<s_num || fd>=f_num) {
+    if(fd<3 || fd>=f_num) {
       printf("read wrong fd %d\n",fd);
       return 0;
     }
@@ -94,7 +94,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
   }
   size_t fs_close(int fd){return 0;}
   size_t fs_lseek(int fd,size_t offset, int whence){
-    if(fd<s_num || fd>=f_num){
+    if(fd<3|| fd>=f_num){
       printf("lseek wrong fd %d\n",fd);
       return 0;
     }
