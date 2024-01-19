@@ -12,4 +12,5 @@
 #include <klib-macros.h>
 #include <debug.h>
 void do_syscall(Context *);
+size_t serial_write(const void *, size_t , size_t );
 #endif

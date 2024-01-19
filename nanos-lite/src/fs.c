@@ -12,7 +12,7 @@ typedef struct {
   WriteFn write;
   size_t open_offset;//pa3 cur 读写位置
 } Finfo;
-#define f_num 24  //21+3
+#define f_num 25  //
 enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB};
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
@@ -28,8 +28,8 @@ size_t invalid_write(const void *buf, size_t offset, size_t len) {
 /* This is the information about all files in disk. */
 static Finfo file_table[] __attribute__((used)) = {
   [FD_STDIN]  = {"stdin", 0, 0, invalid_read, invalid_write},
-  [FD_STDOUT] = {"stdout", 0, 0, invalid_read, invalid_write},
-  [FD_STDERR] = {"stderr", 0, 0, invalid_read, invalid_write},
+  [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write},
+  [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
 #include "files.h"
 };
 size_t fs_open(const char *pathname,int flags,int mode){
@@ -45,6 +45,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
   
   
   size_t fs_read(int fd,void* buf, size_t len){
+    if(file_table[fd].read!=NULL) return file_table[fd].read(buf,0,len);
     if(fd<3 || fd>=f_num) {
       printf("read wrong fd %d\n",fd);
       return 0;
@@ -62,6 +63,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
     return read_len;
   }
   size_t fs_write(int fd,const void* buf,size_t len){
+    if(file_table[fd].write!=NULL) return file_table[fd].write(buf,0,len);
     if(fd==0 || fd>=f_num) {
       printf("write wrong fd 0\n");
       return 0;
