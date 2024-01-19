@@ -1,6 +1,8 @@
 #include <common.h>
 #include "syscall.h"
-
+//pa3
+#include<fs.h>
+//
 void sys_write(int fd,void* buf, size_t count){
   char *buff=(char *)buf;
   if(fd==1 ||fd==2){
@@ -21,7 +23,11 @@ void do_syscall(Context *c) {
   switch (a[0]) {
     case 1: printf("SYS_yield\n");c->GPRx=0;yield();break;
     case 0:printf("SYS_exit\n");c->GPRx=0;halt(c->GPR2);break; 
-    case 4:printf("SYS_write\n");sys_write((int)c->GPR2,(void *)c->GPR3,(size_t)c->GPR4);break;
+    case 2: printf("SYS_open\n");fs_open((const char*)c->GPR2,(int)c->GPR3,(size_t)c->GPR4);break;
+    case 3:printf("SYS_read\n");c->GPRx=0;fs_read((int)c->GPR2,( void *)c->GPR3,(size_t)c->GPR4);break;
+    case 4:printf("SYS_write\n");fs_write((int)c->GPR2,(void *)c->GPR3,(size_t)c->GPR4);break;
+    case 7:printf("SYS_close\n");fs_close((int)c->GPR2);break;
+    case 8:printf("SYS_lseek\n");fs_lseek((int)c->GPR2,(size_t)c->GPR3,(int)c->GPR4);break;
     case 9:printf("SYS_brk\n");c->GPRx=0;break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }

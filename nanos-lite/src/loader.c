@@ -1,6 +1,8 @@
 #include <proc.h>
 #include <elf.h>
-
+//pa3
+#include<fs.h>
+//
 #ifdef __LP64__
 # define Elf_Ehdr Elf64_Ehdr
 # define Elf_Phdr Elf64_Phdr
@@ -11,17 +13,25 @@
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
   //TODO();
+  int fd=fs_open(filename,0,0);
+  if(fd<3) panic("wrong fd loader\n");
+  //size_t ramdisk_offfset
   Elf_Ehdr head;
-  ramdisk_read(&head,0,sizeof(Elf_Ehdr));
+  //ramdisk_read(&head,0,sizeof(Elf_Ehdr));
+  assert(fs_read(fd,&head,sizeof(Elf_Ehdr))==sizeof(Elf_Ehdr));
   if(*(uint32_t *)head.e_ident!=0x464c457f) {printf("Not Elf\n");assert(0);}
-  Elf_Phdr phdr[head.e_phnum];
-  ramdisk_read(phdr,head.e_phoff,head.e_phnum*sizeof(Elf_Phdr));
+  Elf_Phdr phdr;
+  //ramdisk_read(phdr,head.e_phoff,head.e_phnum*sizeof(Elf_Phdr));
   for(int i=0;i<head.e_phnum;i++){
-    if(phdr[i].p_type==PT_LOAD){
-      ramdisk_read((void *)phdr[i].p_vaddr,phdr[i].p_offset,phdr[i].p_memsz);
-      memset((void*)(phdr[i].p_vaddr+phdr[i].p_filesz),0,phdr[i].p_memsz-phdr[i].p_filesz);
+    fs_lseek(fd,head.e_phoff+i*head.e_phentsize,0);
+    assert(fs_read(fd,&phdr,sizeof(Elf_Phdr))==sizeof(Elf_Phdr));
+    if(phdr.p_type==PT_LOAD){
+      fs_lseek(fd,phdr.p_offset,0);
+      assert(fs_read(fd,(void *)phdr.p_vaddr,phdr.p_memsz)==phdr.p_memsz);
+      memset((void*)(phdr.p_vaddr+phdr.p_filesz),0,phdr.p_memsz-phdr.p_filesz);
     }
   }
+  assert(fs_close(fd)==0);
   return head.e_entry;
 }
 
