@@ -12,8 +12,9 @@ typedef struct {
   WriteFn write;
   size_t open_offset;//pa3 cur 读写位置
 } Finfo;
-#define f_num 25  //
-enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB};
+#define f_num 26  //
+#define s_num 4
+enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB,DEV_EVENTS};
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
   panic("should not reach here");
@@ -30,11 +31,12 @@ static Finfo file_table[] __attribute__((used)) = {
   [FD_STDIN]  = {"stdin", 0, 0, invalid_read, invalid_write},
   [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write},
   [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
+  [DEV_EVENTS] = {"/dev/events",0,0,events_read,invalid_write},
 #include "files.h"
 };
 size_t fs_open(const char *pathname,int flags,int mode){
   //简化实现，flags and mode 可忽视
-  for(int i=3;i<f_num;i++){
+  for(int i=s_num;i<f_num;i++){
     if(strcmp(file_table[i].name,pathname)==0){
       file_table[i].open_offset=0;
       return i;
@@ -46,7 +48,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
   
   size_t fs_read(int fd,void* buf, size_t len){
     if(file_table[fd].read!=NULL) return file_table[fd].read(buf,0,len);
-    if(fd<3 || fd>=f_num) {
+    if(fd<s_num || fd>=f_num) {
       printf("read wrong fd %d\n",fd);
       return 0;
     }
@@ -64,6 +66,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
   }
   size_t fs_write(int fd,const void* buf,size_t len){
     if(file_table[fd].write!=NULL) return file_table[fd].write(buf,0,len);
+    //keshenglue
     if(fd==0 || fd>=f_num) {
       printf("write wrong fd 0\n");
       return 0;
@@ -73,6 +76,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
       putch(*((char *)buf+i));
       return len;
     }
+    //end
      if(file_table[fd].open_offset>file_table[fd].size){
       printf("open_offset larger than size\n");
       return 0;
@@ -87,7 +91,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
   }
   size_t fs_close(int fd){return 0;}
   size_t fs_lseek(int fd,size_t offset, int whence){
-    if(fd<3 || fd>=f_num){
+    if(fd<s_num || fd>=f_num){
       printf("lseek wrong fd %d\n",fd);
       return 0;
     }
