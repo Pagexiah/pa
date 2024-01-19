@@ -12,7 +12,7 @@ typedef struct {
   WriteFn write;
   size_t open_offset;//pa3 cur 读写位置
 } Finfo;
-#define f_num 26  //
+#define f_num 27  //
 #define s_num 6
 enum {FD_STDIN, FD_STDOUT, FD_STDERR,DEV_EVENTS,PROC_DISPINFO,FD_FB};
 
