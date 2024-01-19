@@ -39,7 +39,7 @@ static Finfo file_table[] __attribute__((used)) = {
 size_t fs_open(const char *pathname,int flags,int mode){
   //简化实现，flags and mode 可忽视
   for(int i=3;i<f_num;i++){
-    printf("%s %s\n",file_table[i].name,pathname);
+    //printf("%s %s\n",file_table[i].name,pathname);
     if(strcmp(file_table[i].name,pathname)==0){
       file_table[i].open_offset=0;
       return i;
@@ -50,7 +50,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
   
   
   size_t fs_read(int fd,void* buf, size_t len){
-    if(file_table[fd].read!=NULL) return file_table[fd].read(buf,0,len);
+    if(file_table[fd].read!=NULL && fd!=4) return file_table[fd].read(buf,0,len);
     if(fd<3 || fd>=f_num) {
       printf("read wrong fd %d\n",fd);
       return 0;
@@ -63,12 +63,13 @@ size_t fs_open(const char *pathname,int flags,int mode){
     if(file_table[fd].open_offset+len>file_table[fd].size){
       read_len=file_table[fd].size-file_table[fd].open_offset;
     }
-    ramdisk_read(buf,file_table[fd].disk_offset+file_table[fd].open_offset,read_len);
+    if(fd==4) file_table[fd].read(buf,file_table[fd].disk_offset+file_table[fd].open_offset,read_len);
+    else ramdisk_read(buf,file_table[fd].disk_offset+file_table[fd].open_offset,read_len);
     file_table[fd].open_offset+=read_len;
     return read_len;
   }
   size_t fs_write(int fd,const void* buf,size_t len){
-    if(file_table[fd].write!=NULL) return file_table[fd].write(buf,0,len);
+    if(file_table[fd].write!=NULL && fd!=5) return file_table[fd].write(buf,0,len);
     //keshenglue
     if(fd==0 || fd>=f_num) {
       printf("write wrong fd 0\n");
@@ -88,7 +89,8 @@ size_t fs_open(const char *pathname,int flags,int mode){
     if(file_table[fd].open_offset+len>file_table[fd].size){
       write_len=file_table[fd].size-file_table[fd].open_offset;
     }
-    ramdisk_write(buf,file_table[fd].disk_offset+file_table[fd].open_offset,write_len);
+    if(fd==5) file_table[fd].write(buf,file_table[fd].disk_offset+file_table[fd].open_offset,write_len);
+    else ramdisk_write(buf,file_table[fd].disk_offset+file_table[fd].open_offset,write_len);
     file_table[fd].open_offset+=write_len;
     return write_len;
   }
