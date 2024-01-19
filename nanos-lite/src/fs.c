@@ -12,7 +12,7 @@ typedef struct {
   WriteFn write;
   size_t open_offset;//pa3 cur 读写位置
 } Finfo;
-#define f_num 27  //
+#define f_num 30  //
 #define s_num 6
 enum {FD_STDIN, FD_STDOUT, FD_STDERR,DEV_EVENTS,PROC_DISPINFO,FD_FB};
 
@@ -39,6 +39,7 @@ static Finfo file_table[] __attribute__((used)) = {
 size_t fs_open(const char *pathname,int flags,int mode){
   //简化实现，flags and mode 可忽视
   for(int i=3;i<f_num;i++){
+    printf("%s %s\n",file_table[i].name,pathname);
     if(strcmp(file_table[i].name,pathname)==0){
       file_table[i].open_offset=0;
       return i;
