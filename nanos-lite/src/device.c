@@ -30,7 +30,7 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   }
   int ret = sprintf(buf, "%s %s\n", ev.keydown?"kd":"ku", keyname[ev.keycode]);
   if(ret>=len) *((char *)buf+len)='\0';
-  printf("%s\n", buf);
+  //printf("%s\n", buf);
   return ret;
 }
 
