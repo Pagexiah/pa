@@ -50,7 +50,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
   
   
   size_t fs_read(int fd,void* buf, size_t len){
-    if(file_table[fd].read!=NULL && fd!=4) return file_table[fd].read(buf,0,len);
+    if(file_table[fd].read!=NULL ) return file_table[fd].read(buf,0,len);
     if(fd<3 || fd>=f_num) {
       printf("read wrong fd %d\n",fd);
       return 0;
@@ -63,8 +63,9 @@ size_t fs_open(const char *pathname,int flags,int mode){
     if(file_table[fd].open_offset+len>file_table[fd].size){
       read_len=file_table[fd].size-file_table[fd].open_offset;
     }
-    if(fd==4) file_table[fd].read(buf,file_table[fd].disk_offset+file_table[fd].open_offset,read_len);
-    else ramdisk_read(buf,file_table[fd].disk_offset+file_table[fd].open_offset,read_len);
+    //if(fd==4) file_table[fd].read(buf,file_table[fd].disk_offset+file_table[fd].open_offset,read_len);
+    //else 
+    ramdisk_read(buf,file_table[fd].disk_offset+file_table[fd].open_offset,read_len);
     file_table[fd].open_offset+=read_len;
     return read_len;
   }
