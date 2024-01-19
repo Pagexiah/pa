@@ -7,10 +7,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include<assert.h>
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
-
+static int canvas_w =0,canvas_h=0;
+static int canvas_x=0,canvas_y=0;
 uint32_t NDL_GetTicks() {
   struct timeval cur;
   gettimeofday(&cur,NULL);
@@ -42,9 +44,64 @@ void NDL_OpenCanvas(int *w, int *h) {
     }
     close(fbctl);
   }
+  
+  int buf_size = 1024; 
+  char * buf = (char *)malloc(buf_size * sizeof(char));
+  int fd = open("/proc/dispinfo", 0, 0);
+  int ret = read(fd, buf, buf_size);
+   if(close(fd)==0){printf("Can't close\n");assert(0);}
+  if(ret<buf_size){printf("read wrong\n");assert(0);}
+  int i = 0;
+  int width = 0, height = 0;
+  assert(strncmp(buf + i, "WIDTH", 5) == 0);
+  i += 5;
+  for (; i < buf_size; i++) {
+      if (buf[i] == ':') { i++; break; }
+      assert(buf[i] == ' ');
+  }
+  for (; i < buf_size; i++) {
+      if (buf[i] >= '0' && buf[i] <= '9') break;
+      assert(buf[i] == ' ');
+  }
+  for (; i < buf_size; i++) {
+      if (buf[i] >= '0' && buf[i] <= '9') width = width * 10 + buf[i] - '0';
+      else break;
+  }
+  assert(buf[i++] == '\n');
+  assert(strncmp(buf + i, "HEIGHT", 6) == 0);
+  i += 6;
+  for (; i < buf_size; i++) {
+      if (buf[i] == ':') { i++; break; }
+      assert(buf[i] == ' ');
+  }
+  for (; i < buf_size; ++i) {
+      if (buf[i] >= '0' && buf[i] <= '9') break;
+      assert(buf[i] == ' ');
+  }
+  for (; i < buf_size; ++i) {
+      if (buf[i] >= '0' && buf[i] <= '9') height = height * 10 + buf[i] - '0';
+      else break;
+  } 
+  free(buf);
+  screen_w = width;
+  screen_h = height;
+if (*w == 0 && *h == 0) {
+    *w = screen_w;
+    *h = screen_h;
+  }
+  canvas_w = *w;
+  canvas_h = *h;
+  canvas_x=(screen_w - canvas_w) / 2;
+  canvas_y=(screen_h - canvas_h) / 2;
 }
-
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
+  int fd=open("/dev/fb",0,0);
+  for (int i=0;i<h &&i<canvas_h-y;i++){
+    lseek(fd,(x+canvas_x+(y+canvas_y+i)*screen_w)*4,0);
+    if(w+x<canvas_w) write(fd,i*w+pixels,w*4);
+    else write(fd,i*w+pixels,(canvas_w-x)*4);
+  }
+  if(close(fd)==0){printf("Can't close\n");assert(0);}
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {

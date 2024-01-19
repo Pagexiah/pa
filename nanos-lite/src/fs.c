@@ -13,8 +13,8 @@ typedef struct {
   size_t open_offset;//pa3 cur 读写位置
 } Finfo;
 #define f_num 26  //
-#define s_num 4
-enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB,DEV_EVENTS};
+#define s_num 6
+enum {FD_STDIN, FD_STDOUT, FD_STDERR,DEV_EVENTS,PROC_DISPINFO,FD_FB};
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
   panic("should not reach here");
@@ -32,6 +32,8 @@ static Finfo file_table[] __attribute__((used)) = {
   [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write},
   [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
   [DEV_EVENTS] = {"/dev/events",0,0,events_read,invalid_write},
+  [PROC_DISPINFO]={"/proc/dispinfo",0,0,dispinfo_read,invalid_write},
+  [FD_FB]={"/dev/fb",0,0,invalid_read,fb_write},
 #include "files.h"
 };
 size_t fs_open(const char *pathname,int flags,int mode){
@@ -96,13 +98,13 @@ size_t fs_open(const char *pathname,int flags,int mode){
       return 0;
     }
     size_t new;
-    if(whence==SEEK_SET){
+    if(whence==0){
       new=offset;
     }
-    else if(whence==SEEK_CUR){
+    else if(whence==1){
       new=file_table[fd].open_offset+offset;
     }
-    else if(whence==SEEK_END){
+    else if(whence==2){
       new=file_table[fd].size+offset;
     }
     else{
@@ -118,5 +120,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
   }
 void init_fs() {
   // TODO: initialize the size of /dev/fb
-
+  AM_GPU_CONFIG_T ev = io_read(AM_GPU_CONFIG);
+  file_table[FD_FB].size = ev.width * ev.height * sizeof(uint32_t);
+ 
 }
