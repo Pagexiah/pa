@@ -12,7 +12,7 @@ typedef struct {
   WriteFn write;
   size_t open_offset;//pa3 cur 读写位置
 } Finfo;
-#define f_num 23  //20+3
+#define f_num 24  //21+3
 enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB};
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
@@ -45,7 +45,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
   
   
   size_t fs_read(int fd,void* buf, size_t len){
-    if(fd<3 || fd>=23) {
+    if(fd<3 || fd>=f_num) {
       printf("read wrong fd %d\n",fd);
       return 0;
     }
@@ -62,7 +62,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
     return read_len;
   }
   size_t fs_write(int fd,const void* buf,size_t len){
-    if(fd==0 || fd>=23) {
+    if(fd==0 || fd>=f_num) {
       printf("write wrong fd 0\n");
       return 0;
     }
@@ -85,7 +85,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
   }
   size_t fs_close(int fd){return 0;}
   size_t fs_lseek(int fd,size_t offset, int whence){
-    if(fd<3 || fd>=23){
+    if(fd<3 || fd>=f_num){
       printf("lseek wrong fd %d\n",fd);
       return 0;
     }
