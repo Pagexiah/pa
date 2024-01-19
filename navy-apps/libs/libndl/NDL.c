@@ -50,7 +50,7 @@ void NDL_OpenCanvas(int *w, int *h) {
   int fd = open("/proc/dispinfo", 0, 0);
   int ret = read(fd, buf, buf_size);
    if(close(fd)==0){printf("Can't close\n");assert(0);}
-  if(ret<buf_size){printf("read wrong\n");assert(0);}
+  //if(ret<buf_size){printf("read wrong\n");assert(0);}
   int i = 0;
   int width = 0, height = 0;
   assert(strncmp(buf + i, "WIDTH", 5) == 0);
