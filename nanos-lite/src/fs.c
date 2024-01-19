@@ -38,7 +38,7 @@ static Finfo file_table[] __attribute__((used)) = {
 };
 size_t fs_open(const char *pathname,int flags,int mode){
   //简化实现，flags and mode 可忽视
-  for(int i=s_num;i<f_num;i++){
+  for(int i=3;i<f_num;i++){
     if(strcmp(file_table[i].name,pathname)==0){
       file_table[i].open_offset=0;
       return i;
