@@ -17,20 +17,20 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
     d_y=dstrect->y;
   }
   if(srcrect!=NULL){
-    int w = srcrect->w >= (dst->w - dstrect->x) ? (dst->w - dstrect->x):srcrect->w  ;
-    int h = srcrect->h >= (dst->h - dstrect->y) ?  (dst->h - dstrect->y):srcrect->h ;
+    int w = srcrect->w >= (dst->w - d_x) ? (dst->w - d_x):srcrect->w  ;
+    int h = srcrect->h >= (dst->h - d_y) ?  (dst->h - d_y):srcrect->h ;
     for(int i=0;i<h;i++){
       for(int j=0;j<w;j++){
-        dst->pixels[dstrect->x+j+dst->w*(i+dstrect->y)]=src->pixels[srcrect->x+j+src->w*(i+srcrect->y)];
+        dst->pixels[d_x+j+dst->w*(i+d_y)]=src->pixels[srcrect->x+j+src->w*(i+srcrect->y)];
       }
     }
   }
   else{
-    int w = src->w >= (dst->w - dstrect->x) ? (dst->w - dstrect->x):src->w  ;
-    int h = src->h >= (dst->h - dstrect->y) ?  (dst->h - dstrect->y):src->h ;
+    int w = src->w >= (dst->w - d_x) ? (dst->w - d_x):src->w  ;
+    int h = src->h >= (dst->h - d_y) ?  (dst->h - d_y):src->h ;
     for(int i=0;i<h;i++){
       for(int j=0;j<w;j++){
-        dst->pixels[dstrect->x+j+dst->w*(i+dstrect->y)]=src->pixels[j+src->w*(i)];
+        dst->pixels[d_x+j+dst->w*(i+d_y)]=src->pixels[j+src->w*(i)];
       }
     }
   }
