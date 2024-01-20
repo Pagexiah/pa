@@ -26,6 +26,7 @@ int SDL_PollEvent(SDL_Event *ev) {
        break;
      }
    }free(buf);
+   printf("type %d key %d\n",ev->key.type,ev->key.keysym.sym);
    return 1;
   }
   ev->key.type=SDL_USEREVENT;
