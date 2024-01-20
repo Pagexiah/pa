@@ -20,10 +20,10 @@ int SDL_PollEvent(SDL_Event *ev) {
   if(NDL_PollEvent(buf,32)==1){
    if(strncmp(buf,"ku",2)==0) ev->key.type=SDL_KEYUP;
    if(strncmp(buf,"kd",2)==0) ev->key.type=SDL_KEYDOWN;
-   printf("buf :%s\n",buf);
+   //printf("buf :%s\n",buf);
    for(int i=0;i<sizeof(keyname)/sizeof(keyname[0]);i++){
      //printf("%s %s %d\n",buf+3,keyname[i],strlen(buf)-4);
-     if(strncmp(buf+3,keyname[i],strlen(buf)-4)==0){
+     if(strncmp(buf+3,keyname[i],strlen(buf)-4)==0 && strlen(buf)-4==strlen(keyname[i])){
        ev->key.keysym.sym=i;
        break;
      }
@@ -31,18 +31,17 @@ int SDL_PollEvent(SDL_Event *ev) {
    printf("type %d key %d\n",ev->key.type,ev->key.keysym.sym);
    return 1;
   }
-  ev->key.type=SDL_USEREVENT;
-  ev->key.keysym.sym=0;
   free(buf);
   return 0;
 }
 
 int SDL_WaitEvent(SDL_Event *event) {
-/*
   while(1){
-    if(SDL_PollEvent(event)) break;
-  }*/
-  SDL_PollEvent(event);
+    if(SDL_PollEvent(event)){ 
+      printf("type %d key %d\n",event->key.type,event->key.keysym.sym)
+    break;}
+  }
+  //SDL_PollEvent(event);
   return 1;
 }
 
