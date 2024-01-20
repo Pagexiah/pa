@@ -127,35 +127,45 @@ typedef	__uint128_t fixedptud;
 
 /* Multiplies a fixedpt number with an integer, returns the result. */
 static inline fixedpt fixedpt_muli(fixedpt A, int B) {
-	return 0;
+  return A*B;
 }
 
 /* Divides a fixedpt number with an integer, returns the result. */
 static inline fixedpt fixedpt_divi(fixedpt A, int B) {
-	return 0;
+	return A/B;
 }
 
 /* Multiplies two fixedpt numbers, returns the result. */
 static inline fixedpt fixedpt_mul(fixedpt A, fixedpt B) {
-	return 0;
+	return A*B/FIXEDPT_ONE;
 }
 
 
 /* Divides two fixedpt numbers, returns the result. */
 static inline fixedpt fixedpt_div(fixedpt A, fixedpt B) {
-	return 0;
+  fixedptd result=(fixedptd)A/(fixedptd)B*(fixedptd)FIXEDPT_ONE;
+	return (fixedpt)result;
 }
 
 static inline fixedpt fixedpt_abs(fixedpt A) {
-	return 0;
+  fixedpt A_abs;
+  fixedpt sign=(fixedpt)((fixedptu)A>>31<<(FIXEDPT_BITS - FIXEDPT_WBITS));
+  if(sign==FIXEDPT_ONE){
+    A_abs=-A;
+  }
+	return A_abs;
 }
 
 static inline fixedpt fixedpt_floor(fixedpt A) {
-	return 0;
+  if(fixedpt_fracpart(A)==0) return A;
+  if(A>=0) return A & ~FIXEDPT_FMASK;
+  else return (A & ~FIXEDPT_FMASK)-FIXEDPT_ONE;
 }
 
 static inline fixedpt fixedpt_ceil(fixedpt A) {
-	return 0;
+   if(fixedpt_fracpart(A)==0) return A;
+   if(A>=0) return (A & ~FIXEDPT_FMASK)+FIXEDPT_ONE;
+   else return A& ~FIXEDPT_FMASK;
 }
 
 /*

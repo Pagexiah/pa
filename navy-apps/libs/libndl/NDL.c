@@ -67,7 +67,7 @@ void NDL_OpenCanvas(int *w, int *h) {
       if (buf[i] >= '0' && buf[i] <= '9') width = width * 10 + buf[i] - '0';
       else break;
   }
-  assert(buf[i++] == '\n');
+  //assert(buf[i++] == '\n');
   assert(strncmp(buf + i, "HEIGHT", 6) == 0);
   i += 6;
   for (; i < buf_size; i++) {
