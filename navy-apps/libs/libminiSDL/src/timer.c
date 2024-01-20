@@ -11,9 +11,7 @@ int SDL_RemoveTimer(SDL_TimerID id) {
 }
 
 uint32_t SDL_GetTicks() {
-  struct timeval cur;
-  gettimeofday(&cur,NULL);
-  return cur.tv_sec*1000+cur.tv_usec/1000;
+  return (uint32_t)NDL_GetTicks();
   //return 0;
 }
 
