@@ -53,6 +53,7 @@ void NDL_OpenCanvas(int *w, int *h) {
    if(ret>buf_size){printf("read wrong\n");assert(0);}
   int i = 0;
   int width = 0, height = 0;
+  printf("buf %s\n",buf);
   assert(strncmp(buf + i, "WIDTH", 5) == 0);
   i += 5;
   for (; i < buf_size; i++) {
