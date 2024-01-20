@@ -23,7 +23,7 @@ int SDL_PollEvent(SDL_Event *ev) {
    printf("buf :%s\n",buf);
    for(int i=0;i<sizeof(keyname)/sizeof(keyname[0]);i++){
      //printf("%s %s %d\n",buf+3,keyname[i],strlen(buf)-4);
-     if(strncmp(buf+3,keyname[i],strlen(buf)-3)==0){
+     if(strncmp(buf+3,keyname[i],strlen(buf)-4)==0){
        ev->key.keysym.sym=i;
        break;
      }
