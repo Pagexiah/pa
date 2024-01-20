@@ -27,7 +27,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   }
   */
   //if (NO==7) cpu.csr.mepc = epc;
-  //printf("\nmcause:%d,mepc:%x,mtvec:%x\n",cpu.csr.mcause,cpu.csr.mepc,cpu.csr.mtvec);
+  printf("\nmcause:%d,mepc:%x,mtvec:%x\n",cpu.csr.mcause,cpu.csr.mepc,cpu.csr.mtvec);
   return cpu.csr.mtvec;
 
 }
