@@ -15,7 +15,7 @@ int SDL_PushEvent(SDL_Event *ev) {
 }
 
 int SDL_PollEvent(SDL_Event *ev) {
-  static char *buf;//=( char *)malloc(32*sizeof(char));
+  char *buf;//=( char *)malloc(32*sizeof(char));
   memset(buf,0,32);
   if(NDL_PollEvent(buf,32)==1){
    if(strncmp(buf,"ku",2)==0) ev->key.type=SDL_KEYUP;
