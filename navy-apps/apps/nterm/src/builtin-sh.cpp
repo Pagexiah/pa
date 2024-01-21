@@ -29,6 +29,7 @@ static void sh_handle_cmd(const char *cmd) {
 }
 
 void builtin_sh_run() {
+  assert(setenv("PATH", "/bin", 0) == 0);
   sh_banner();
   sh_prompt();
 
