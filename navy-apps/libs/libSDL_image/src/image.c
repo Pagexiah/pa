@@ -20,6 +20,7 @@ SDL_Surface* IMG_Load(const char *filename) {
   char * buf=(char *)SDL_malloc(size*sizeof(char));
   fgets(buf,sizeof(buf),fp);
   SDL_Surface * s=STBIMG_LoadFromMemory(buf,size);
+  printf("suc");
   fclose(fp);
   SDL_free(buf);
   
