@@ -16,16 +16,16 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   int fd=fs_open(filename,0,0);
   if(fd<3) panic("wrong fd loader\n");
   //size_t ramdisk_offfset
-  Elf_Ehdr head;
+  Elf32_Ehdr head;
   //ramdisk_read(&head,0,sizeof(Elf_Ehdr));
-  assert(fs_read(fd,&head,sizeof(Elf_Ehdr))==sizeof(Elf_Ehdr));
+  assert(fs_read(fd,&head,sizeof(Elf32_Ehdr))==sizeof(Elf32_Ehdr));
   if(*(uint32_t *)head.e_ident!=0x464c457f) {printf("Not Elf\n");assert(0);}
-  Elf_Phdr phdr;
+  Elf32_Phdr phdr;
   //ramdisk_read(phdr,head.e_phoff,head.e_phnum*sizeof(Elf_Phdr));
   printf("phdr %d\n",sizeof(Elf_Phdr));
   for(int i=0;i<head.e_phnum;i++){
     fs_lseek(fd,head.e_phoff+i*head.e_phentsize,SEEK_SET);
-    assert(fs_read(fd,&phdr,sizeof(Elf_Phdr))==sizeof(Elf_Phdr));
+    assert(fs_read(fd,&phdr,sizeof(Elf32_Phdr))==sizeof(Elf32_Phdr));
     if(phdr.p_type==PT_LOAD){
       fs_lseek(fd,phdr.p_offset,0);
       assert(fs_read(fd,(void *)phdr.p_vaddr,phdr.p_filesz)==phdr.p_filesz);
