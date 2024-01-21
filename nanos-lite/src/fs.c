@@ -103,7 +103,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
       return 0;
     }
     size_t new;
-    printf("%d\n",offset);
+    //printf("%d\n",offset);
     if(whence==0){
       new=offset;
     }
