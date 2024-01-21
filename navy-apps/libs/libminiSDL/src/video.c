@@ -8,7 +8,7 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
 ///*
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
-  printf("BLIT bits %d, 8? %d\n",dst->format->BitsPerPixel,dst->format->palette==NULL);
+ // printf("BLIT bits %d, 8? %d\n",dst->format->BitsPerPixel,dst->format->palette==NULL);
   int d_x,d_y;
   if(dst->format->palette==NULL){
     uint32_t * d=(uint32_t *)dst->pixels;
@@ -139,7 +139,7 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 ///*
-   printf("FILL 8? %d\n",dst->format->palette==NULL);
+   //printf("FILL 8? %d\n",dst->format->palette==NULL);
   if(dst->format->palette==NULL)
     {
      uint32_t *dp=(uint32_t *)dst->pixels;
@@ -222,13 +222,13 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
 ///*
-  printf("UP 8? %d\n",s->format->palette==NULL);
+ // printf("UP 8? %d\n",s->format->palette==NULL);
   if(s->format->palette!=NULL){
      if(s->format->palette->colors==NULL){printf("Palette and no color\n");assert(0);}
      int W=x==0&&y==0&&w==0&&h==0? s->w:w;
      int H=x==0&&y==0&&w==0&&h==0?s->h:h;
-     printf("W %d H %d s->w %d s->h %d w %d h %d\n",W,H,s->w,s->h,w,h);
-     printf("W*H %d\n",W*H);
+    // printf("W %d H %d s->w %d s->h %d w %d h %d\n",W,H,s->w,s->h,w,h);
+     //printf("W*H %d\n",W*H);
         uint32_t  *pixels = (uint32_t *)malloc(W * H * sizeof(uint32_t ));
         for (int i = 0; i < W*H; i++){
             SDL_Color color = s->format->palette->colors[((uint8_t*)(s->pixels))[i]];
@@ -236,7 +236,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
             
           
         }
-        printf("here\n");
+        //printf("here\n");
         NDL_DrawRect((uint32_t *)pixels, x, y, W, H);
         free(pixels);
   }
