@@ -22,7 +22,10 @@ static void sh_prompt() {
   sh_printf("sh> ");
 }
 
+char *filename;
 static void sh_handle_cmd(const char *cmd) {
+  strncpy(filename,cmd,strlen(cmd)-1);
+  execve(filename,0,0);
 }
 
 void builtin_sh_run() {
