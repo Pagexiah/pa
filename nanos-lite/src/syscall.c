@@ -3,6 +3,7 @@
 //pa3
 #include<fs.h>
 #include<sys/time.h>
+#include<proc.h>
 //
 void sys_write(int fd,void* buf, size_t count){
   char *buff=(char *)buf;
@@ -23,6 +24,11 @@ int sys_gettimeofday(struct timeval *tv){
    tv->tv_usec=us-us/1000000*1000000;
    return 0;
 }
+int sys_execve(const cahr * filename){
+ naive_uload(NULL,filename);
+ return -1;
+
+}
 void do_syscall(Context *c) {
   uintptr_t a[4];
   a[0] = c->GPR1;
@@ -31,7 +37,9 @@ void do_syscall(Context *c) {
     case 1: //printf("SYS_yield\n");
       c->GPRx=0;yield();break;
     case 0://printf("SYS_exit\n");
-      c->GPRx=0;halt(c->GPR2);break; 
+      c->GPRx=0;//halt(c->GPR2);
+      sys_execve("/bin/menu");
+      break; 
     case 2: //printf("SYS_open\n");
       c->GPRx=fs_open((const char*)c->GPR2,(int)c->GPR3,(size_t)c->GPR4);break;
     case 3://printf("SYS_read\n");
@@ -43,7 +51,8 @@ void do_syscall(Context *c) {
     case 8://printf("SYS_lseek\n");
       c->GPRx=fs_lseek((int)c->GPR2,(size_t)c->GPR3,(int)c->GPR4);break;
     case 9://printf("SYS_brk\n");
-      c->GPRx=0;break;\
+      c->GPRx=0;break;
+    case 13:sys_execve((const char *)c->GPR2);while(1);
     case 19://printf("SYS_gettimeofday\n");
       c->GPRx=sys_gettimeofday((struct timeval *)c->GPR2);break;
     default: panic("Unhandled syscall ID = %d", a[0]);
