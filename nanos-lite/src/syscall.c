@@ -24,7 +24,7 @@ int sys_gettimeofday(struct timeval *tv){
    tv->tv_usec=us-us/1000000*1000000;
    return 0;
 }
-int sys_execve(const cahr * filename){
+int sys_execve(const char * filename){
  naive_uload(NULL,filename);
  return -1;
 
@@ -38,7 +38,8 @@ void do_syscall(Context *c) {
       c->GPRx=0;yield();break;
     case 0://printf("SYS_exit\n");
       c->GPRx=0;//halt(c->GPR2);
-      sys_execve("/bin/menu");
+      const char * s="/bin/menu";
+      sys_execve(s);
       break; 
     case 2: //printf("SYS_open\n");
       c->GPRx=fs_open((const char*)c->GPR2,(int)c->GPR3,(size_t)c->GPR4);break;
