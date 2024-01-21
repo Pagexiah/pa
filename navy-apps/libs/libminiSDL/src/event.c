@@ -27,11 +27,11 @@ int SDL_PollEvent(SDL_Event *ev) {
        ev->key.keysym.sym=i;
        break;
      }
-   }free(buf);
+   }//free(buf);
    printf("type %d key %d\n",ev->key.type,ev->key.keysym.sym);
    return 1;
   }
-  free(buf);
+  //free(buf);
   return 0;
 }
 
