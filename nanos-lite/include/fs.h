@@ -10,5 +10,5 @@ size_t fs_open(const char *,int ,int );
 size_t fs_write(int ,const void* ,size_t );
 size_t fs_read(int ,void* , size_t );
 size_t fs_close(int );
-size_t fs_lseek(int ,size_t , int );
+size_t fs_lseek(int ,int , int );
 #endif

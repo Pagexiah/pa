@@ -39,9 +39,10 @@ static Finfo file_table[] __attribute__((used)) = {
 size_t fs_open(const char *pathname,int flags,int mode){
   //简化实现，flags and mode 可忽视
   for(int i=3;i<f_num;i++){
-    //printf("%s %s\n",file_table[i].name,pathname);
+    
     if(strcmp(file_table[i].name,pathname)==0){
       file_table[i].open_offset=0;
+      printf("%s %s\n",file_table[i].name,pathname);
       return i;
     }
   }
@@ -96,12 +97,13 @@ size_t fs_open(const char *pathname,int flags,int mode){
     return write_len;
   }
   size_t fs_close(int fd){return 0;}
-  size_t fs_lseek(int fd,size_t offset, int whence){
+  size_t fs_lseek(int fd,int offset, int whence){
     if(fd<3|| fd>=f_num){
       printf("lseek wrong fd %d\n",fd);
       return 0;
     }
     size_t new;
+    printf("%d\n",offset);
     if(whence==0){
       new=offset;
     }
@@ -116,7 +118,7 @@ size_t fs_open(const char *pathname,int flags,int mode){
       return -1;
     }
     if(new<0 || new >file_table[fd].size){
-      printf("wrong offset\n");
+      printf("wrong offset %d %d\n",new,file_table[fd].size);
       return -1;
     }
     file_table[fd].open_offset=new;

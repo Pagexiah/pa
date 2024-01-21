@@ -22,12 +22,13 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   if(*(uint32_t *)head.e_ident!=0x464c457f) {printf("Not Elf\n");assert(0);}
   Elf_Phdr phdr;
   //ramdisk_read(phdr,head.e_phoff,head.e_phnum*sizeof(Elf_Phdr));
+  printf("%d\n",sizeof(Elf_Phdr));
   for(int i=0;i<head.e_phnum;i++){
-    fs_lseek(fd,head.e_phoff+i*head.e_phentsize,0);
+    fs_lseek(fd,head.e_phoff+i*head.e_phentsize,SEEK_SET);
     assert(fs_read(fd,&phdr,sizeof(Elf_Phdr))==sizeof(Elf_Phdr));
     if(phdr.p_type==PT_LOAD){
       fs_lseek(fd,phdr.p_offset,0);
-      assert(fs_read(fd,(void *)phdr.p_vaddr,phdr.p_memsz)==phdr.p_memsz);
+      assert(fs_read(fd,(void *)phdr.p_vaddr,phdr.p_filesz)==phdr.p_filesz);
       memset((void*)(phdr.p_vaddr+phdr.p_filesz),0,phdr.p_memsz-phdr.p_filesz);
     }
   }
