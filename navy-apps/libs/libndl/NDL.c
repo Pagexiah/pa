@@ -106,6 +106,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     printf("seek suc\n");
     if(w+x<canvas_w) write(fd,i*w+pixels,w*4);
     else write(fd,i*w+pixels,(canvas_w-x)*4);
+    printf("write suc\n");
   }
   if(close(fd)!=0){printf("Can't close\n");assert(0);}
 }
