@@ -38,7 +38,7 @@ void do_syscall(Context *c) {
       c->GPRx=0;yield();break;
     case 0://printf("SYS_exit\n");
       c->GPRx=0;//halt(c->GPR2);
-      const char * s="/bin/menu";
+      const char * s="/bin/nterm";
       sys_execve(s);
       break; 
     case 2: //printf("SYS_open\n");
