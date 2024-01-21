@@ -96,19 +96,19 @@ if (*w == 0 && *h == 0) {
   canvas_h = *h;
   canvas_x=(screen_w - canvas_w) / 2;
   canvas_y=(screen_h - canvas_h) / 2;
-  printf("canvas_w %d canvas_h %d canvas_x %d canvas_y%d \n",canvas_w,canvas_h,canvas_x,canvas_y);
+  //printf("canvas_w %d canvas_h %d canvas_x %d canvas_y%d \n",canvas_w,canvas_h,canvas_x,canvas_y);
 }
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-  printf("NDL_DrawRect\n");
-  printf("x %d y %d w %d h %d\n",x,y,w,h);
+  //printf("NDL_DrawRect\n");
+  //printf("x %d y %d w %d h %d\n",x,y,w,h);
  
   int fd=open("/dev/fb",0,0);
   for (int i=0;i<h &&i<canvas_h-y;i++){
     lseek(fd,(x+canvas_x+(y+canvas_y+i)*screen_w)*4,0);\
-    printf("seek suc %d\n",i);
+    //printf("seek suc %d\n",i);
     if(w+x<canvas_w) write(fd,i*w+pixels,w*4);
     else write(fd,i*w+pixels,(canvas_w-x)*4);
-    printf("write suc %d\n",i);
+   // printf("write suc %d\n",i);
   }
   //if(close(fd)!=0){printf("Can't close\n");assert(0);}
   close(fd);
