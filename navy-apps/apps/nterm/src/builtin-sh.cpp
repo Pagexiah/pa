@@ -25,7 +25,8 @@ static void sh_prompt() {
 char filename[128];
 static void sh_handle_cmd(const char *cmd) {
   strncpy(filename,cmd,strlen(cmd)-1);
-  execve(filename,NULL,NULL);
+  //execve(filename,NULL,NULL);
+   execvp(filename,NULL);
 }
 
 void builtin_sh_run() {
