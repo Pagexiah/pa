@@ -17,10 +17,10 @@ SDL_Surface* IMG_Load(const char *filename) {
   fseek(fp,0,SEEK_END);
   long size=ftell(fp);
   fseek(fp,0,SEEK_SET);
-  char * buf=(char *)SDL_malloc(size*sizeof(char));
-  fgets(buf,sizeof(buf),fp);
+  char * buf=(unsigned char *)SDL_malloc(size*sizeof(unsigned char));
+  fread(buf,1,sizeof(buf),fp);
   SDL_Surface * s=STBIMG_LoadFromMemory(buf,size);
-  printf("suc");
+  //printf("suc");
   fclose(fp);
   SDL_free(buf);
   
