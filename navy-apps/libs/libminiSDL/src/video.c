@@ -8,7 +8,6 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
   int d_x,d_y;
-  
   if(dst->format->palette==NULL){
     uint32_t * d=(uint32_t *)dst->pixels;
     uint32_t * s=(uint32_t *)src->pixels;
@@ -97,10 +96,14 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
   else
     {
     uint8_t *dp=(uint8_t *)dst->pixels;
+    SDL_Color *colors=dst->format->palette->colors;
     if(dstrect==NULL) {
     for(int i=0;i<dst->h;i++){
       for (int j=0;j<dst->w;j++){
-         dp[j+i*dst->w]=color;
+         colors[dp[j+i*dst->w]].a=(uint8_t)(color>>24);
+         colors[dp[j+i*dst->w]].r=(uint8_t)(color>>16);
+         colors[dp[j+i*dst->w]].g=(uint8_t)(color>>8);
+         colors[dp[j+i*dst->w]].b=(uint8_t)(color);
       }
     }
   }
@@ -109,7 +112,10 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
     int h = dstrect->h >= (dst->h - dstrect->y) ?  (dst->h - dstrect->y):dstrect->h ;
     for(int i=0;i<h;i++){
       for(int j=0;j<w;j++){
-         dp[dstrect->x+j+dst->w*(i+dstrect->y)]=color;
+         colors[dp[dstrect->x+j+dst->w*(i+dstrect->y)]].a=(uint8_t)(color>>24);
+         colors[dp[dstrect->x+j+dst->w*(i+dstrect->y)]].r=(uint8_t)(color>>16);
+         colors[dp[dstrect->x+j+dst->w*(i+dstrect->y)]].g=(uint8_t)(color>>8);
+         colors[dp[dstrect->x+j+dst->w*(i+dstrect->y)]].b=(uint8_t)(color);
       }
     }
   }
