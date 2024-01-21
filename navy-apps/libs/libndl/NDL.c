@@ -111,6 +111,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     printf("write suc %d\n",i);
   }
   //if(close(fd)!=0){printf("Can't close\n");assert(0);}
+  close(fd);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
