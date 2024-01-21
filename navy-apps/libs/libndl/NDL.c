@@ -23,6 +23,7 @@ int NDL_PollEvent(char *buf, int len) {
   //memset(buf,0,len);
   int fd=open("/dev/events",0,0);
   int ret=read(fd,buf,len);
+  close(fd);
   if(ret==0) return 0;
   else return 1;
 }
