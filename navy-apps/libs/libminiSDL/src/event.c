@@ -36,7 +36,7 @@ int SDL_PollEvent(SDL_Event *ev) {
 }
 
 int SDL_WaitEvent(SDL_Event *event) {
-/*
+///*
   while(SDL_PollEvent(event)==0);
   //{
     //if(SDL_PollEvent(event)){ 
@@ -45,7 +45,8 @@ int SDL_WaitEvent(SDL_Event *event) {
   //}
   //SDL_PollEvent(event);
   return 1;
-  */
+  //*/
+  /*
    unsigned buf_size = 32;
   char buf[32];
   if (NDL_PollEvent(buf, buf_size)) {
@@ -64,11 +65,11 @@ int SDL_WaitEvent(SDL_Event *event) {
 
 int SDL_PeepEvents(SDL_Event *ev, int numevents, int action, uint32_t mask) {
   
-  return 0;
+  return 0;*/
 }
-//unsigned char keystate[sizeof(keyname) / sizeof(keyname[0])];
+unsigned char keystate[sizeof(keyname) / sizeof(keyname[0])];
 uint8_t* SDL_GetKeyState(int *numkeys) {
-/*
+
   SDL_Event event;
   memset(keystate, 0, sizeof(keystate));
   for(int i=0;i<=1000;i++){
@@ -76,6 +77,6 @@ uint8_t* SDL_GetKeyState(int *numkeys) {
         keystate[event.key.keysym.sym] = 1;
     }
   }
-  return keystate;*/
+  return keystate;
   return NULL;
 }
